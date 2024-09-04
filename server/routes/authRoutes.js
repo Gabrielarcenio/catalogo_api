@@ -1,15 +1,35 @@
-// server/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User'); // Modelo de usuário
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Rota de registro de usuário
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Registra um novo usuário
+ *     description: Registra um novo usuário no sistema
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Usuário registrado com sucesso
+ *       400:
+ *         description: Erro ao registrar usuário
+ */
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 8);
-
   const newUser = new User({ username, password: hashedPassword });
 
   try {
@@ -20,7 +40,40 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Rota de login de usuário
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Faz login de um usuário
+ *     description: Faz login de um usuário com base no nome de usuário e senha fornecidos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login bem-sucedido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 auth:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
+ *       404:
+ *         description: Usuário não encontrado
+ *       401:
+ *         description: Senha inválida
+ */
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
